@@ -1,6 +1,5 @@
 package com.vladiknt.vasilyev
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -8,8 +7,6 @@ import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.scale
 import com.beust.klaxon.Klaxon
 import com.bumptech.glide.Glide
 import com.github.kittinunf.fuel.httpGet

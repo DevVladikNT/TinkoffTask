@@ -14,7 +14,6 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:onClick="swapCache"
             android:id="@+id/radioRandom"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -22,10 +21,10 @@
             android:layout_weight="1"
             android:background="@drawable/buttons_style_p"
             android:elevation="4dp"
+            android:onClick="swapCache"
             android:text="Random" />
 
         <RadioButton
-            android:onClick="swapCache"
             android:id="@+id/radioLatest"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -33,10 +32,10 @@
             android:layout_weight="1"
             android:background="@drawable/buttons_style_p"
             android:elevation="4dp"
+            android:onClick="swapCache"
             android:text="Latest" />
 
         <RadioButton
-            android:onClick="swapCache"
             android:id="@+id/radioTop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -44,10 +43,10 @@
             android:layout_weight="1"
             android:background="@drawable/buttons_style_p"
             android:elevation="4dp"
+            android:onClick="swapCache"
             android:text="Top" />
 
         <RadioButton
-            android:onClick="swapCache"
             android:id="@+id/radioHot"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -55,6 +54,7 @@
             android:layout_weight="1"
             android:background="@drawable/buttons_style_p"
             android:elevation="4dp"
+            android:onClick="swapCache"
             android:text="Hot" />
 
     </RadioGroup>
