@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimaryVariant"
+    tools:context=".MainActivity">
+
+    <RadioGroup
+        android:id="@+id/tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:onClick="swapCache"
+            android:id="@+id/radioRandom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttons_style_p"
+            android:elevation="4dp"
+            android:text="Random" />
+
+        <RadioButton
+            android:onClick="swapCache"
+            android:id="@+id/radioLatest"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttons_style_p"
+            android:elevation="4dp"
+            android:text="Latest" />
+
+        <RadioButton
+            android:onClick="swapCache"
+            android:id="@+id/radioTop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttons_style_p"
+            android:elevation="4dp"
+            android:text="Top" />
+
+        <RadioButton
+            android:onClick="swapCache"
+            android:id="@+id/radioHot"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttons_style_p"
+            android:elevation="4dp"
+            android:text="Hot" />
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/gifTab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/buttonPanel"
+        android:layout_below="@id/tags"
+        android:layout_margin="4dp"
+        android:background="@drawable/buttons_style_p"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/loadingGif"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text=""
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttons_style_p"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:onClick="previousButton"
+            android:text="Previous"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/buttons_style_p"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:onClick="nextButton"
+            android:text="Next"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>
