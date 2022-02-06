@@ -1,11 +1,11 @@
 package com.vladiknt.vasilyev
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.beust.klaxon.Klaxon
 import com.bumptech.glide.Glide
@@ -19,10 +19,12 @@ class MainActivity : AppCompatActivity() {
     private var data = ""
     private lateinit var gifTab: ImageView
     private lateinit var gifDescription: TextView
+    // Текущий кещ, номер поста и категория
     private var cache = ArrayList<Pair<String?, String?>>()
     private var iterator = 0
     private var cacheType = 0
 
+    // Отдельный кеш и номер текущего поста под каждую категорию
     private var cacheRandom = ArrayList<Pair<String?, String?>>()
     private var iteratorRandom = 0
     private var cacheLatest = ArrayList<Pair<String?, String?>>()
@@ -38,11 +40,13 @@ class MainActivity : AppCompatActivity() {
 
         gifTab = findViewById(R.id.loadingGif)
         gifDescription = findViewById(R.id.description)
+        // Выбираем категорию random и загружаем первый пост
         findViewById<RadioButton>(R.id.radioRandom).isChecked = true
         load()
     }
 
     fun swapCache(view: View?) {
+        // При смене категории сохраняем текущий кеш
         when (cacheType) {
             0 -> {
                 cacheRandom = cache
@@ -61,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                 iteratorHot = iterator
             }
         }
+        // Загружаем кеш выбранной категории чтобы продолжить с последнего поста
         when (view?.id) {
             R.id.radioRandom -> {
                 cache = cacheRandom
@@ -91,21 +96,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun previousButton(view: View?) {
+        // Если это первый загруженный пост, то кнопка previous ничего не делает
         if (iterator == 0) return
 
-        iterator--
-        val previousGif = cache[iterator]
-        Glide.with(this)
-            .asGif()
-            .load(previousGif.first)
-            .fitCenter()
-            .placeholder(R.drawable.loading_logo)
-            .error(R.drawable.error_logo)
-            .into(gifTab)
-        gifDescription.text = previousGif.second
+        // Иначе загружаем предыдущий пост из кеша
+        try {
+            iterator--
+            val previousGif = cache[iterator]
+            Glide.with(this)
+                    .asGif()
+                    .load(previousGif.first)
+                    .fitCenter()
+                    .placeholder(R.drawable.loading_logo)
+                    .error(R.drawable.error_logo)
+                    .into(gifTab)
+            gifDescription.text = previousGif.second
+        } catch (e: Exception) {
+            // Если ошибка, то обратно возвращаем номер поста
+            iterator++
+            gifDescription.clearComposingText()
+        }
     }
 
     fun nextButton(view: View?) {
+        // Формируем url для запроса json`а
         iterator++
         req = when (cacheType) {
             0 -> "https://developerslife.ru/random?json=true"
@@ -119,50 +133,71 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun load() {
-        if (iterator < cache.size) {
-            val nextGif = cache[iterator]
-            Glide.with(this)
-                .asGif()
-                .load(nextGif.first)
-                .fitCenter()
-                .placeholder(R.drawable.loading_logo)
-                .error(R.drawable.error_logo)
-                .into(gifTab)
-            gifDescription.text = nextGif.second
+        // Если пост уже был загружен ранее, то достаем ответ api из кеша
+        try {
+            if (iterator < cache.size) {
+                val nextGif = cache[iterator]
+                Glide.with(this)
+                        .asGif()
+                        .load(nextGif.first)
+                        .fitCenter()
+                        .placeholder(R.drawable.loading_logo)
+                        .error(R.drawable.error_logo)
+                        .into(gifTab)
+                gifDescription.text = nextGif.second
+                return
+            }
+        } catch (e: Exception) {
+            // Если ошибка, то обратно возвращаем номер поста
+            iterator--
+            gifDescription.clearComposingText()
             return
         }
 
+        // Если нужен новый пост, то делаем запрос
         val httpAsync = req
             .httpGet()
             .responseString { request, response, result ->
                 when (result) {
+                    // Если ошибка запроса, то показываем логотип ошибки и выходим из запроса
                     is Result.Failure -> {
                         val ex = result.getException()
-                        Toast.makeText(this, ex.message, Toast.LENGTH_SHORT).show()
+                        val error = BitmapFactory.decodeResource(resources, R.drawable.error_logo)
+                        gifTab.setImageBitmap(error)
+                        gifDescription.clearComposingText()
+                        iterator--
+                        return@responseString
                     }
+                    // Если получили ответ на запрос
                     is Result.Success -> {
                         data = result.get()
 
                         try {
+                            // Парсим json
                             val jsonObj = when (cacheType) {
                                 0 -> Klaxon().parse<Note>(data)
                                 else -> Klaxon().parse<NoteArray>(data)?.result?.get(0)
                             }
 
+                            // Записываем ответ api в кеш
                             if (iterator == cache.size)
                                 cache.add(Pair(jsonObj?.gifURL, jsonObj?.description))
 
+                            // Загружаем гифку
                             Glide.with(this)
                                 .asGif()
                                 .load(jsonObj?.gifURL)
                                 .fitCenter()
                                 .placeholder(R.drawable.loading_logo)
-                                .error(R.drawable.error_logo)
                                 .into(gifTab)
 
+                            // Ставим описание к гифке
                             gifDescription.text = jsonObj?.description
                         } catch (e: Exception) {
-                            Toast.makeText(this, "Error!\n${e.message}", Toast.LENGTH_SHORT).show()
+                            // Если ошибка при загрузке гифки, то показываем логотип ошибки и выходим из запроса
+                            val error = BitmapFactory.decodeResource(resources, R.drawable.error_logo)
+                            gifTab.setImageBitmap(error)
+                            gifDescription.clearComposingText()
                         }
                     }
                 }
@@ -170,6 +205,7 @@ class MainActivity : AppCompatActivity() {
         httpAsync.join()
     }
 
+    // Классы для приведения полученного json к объекту kotlin
     class Note(val description: String, val gifURL: String)
     class NoteArray(val result: List<Note>)
 }
